@@ -1,9 +1,10 @@
-use crate::Ad;
 use eyre::{Context, Result};
 use once_cell::sync::Lazy;
 use regex::Regex;
 use reqwest::{Url, get};
 use scraper::{ElementRef, Html, Selector};
+
+use crate::model::Ad;
 
 pub async fn get_ads(url: Url) -> Result<Vec<Ad>> {
     let response = get(url.clone())
