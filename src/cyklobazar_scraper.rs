@@ -27,7 +27,7 @@ pub async fn get_ads(url: Url) -> Result<Vec<Ad>> {
         .select(&ad_selector)
         .filter_map(|item| {
             Some(Ad {
-                id: parse_id(item)?.to_string(),
+                cb_id: parse_id(item)?.to_string(),
                 title: parse_title(item)?,
             })
         })

@@ -3,32 +3,46 @@ use std::{collections::HashMap, time::Duration};
 use eyre::Result;
 use jiff::Timestamp;
 use reqwest::Url;
+use serde::{Deserialize, Serialize};
+use uuid::Uuid;
 
 use crate::cyklobazar_scraper::get_ads;
 
 const SCRAPING_INTERVAL: Duration = Duration::from_secs(60 * 10);
 
-#[derive(Debug, Clone)]
-pub struct Ad {
-    pub title: String,
-    pub id: String,
-}
-
-#[derive(Debug, Clone)]
+// A watchdog set to sniff for ads matching a certain search URL.
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Doggo {
-    email: String,
-    url: Url,
+    pub id: Uuid,
+    pub name: String,
+    pub email: String,
+    pub url: Url,
     last_run: Option<Timestamp>,
-    seen_ads: HashMap<String, Ad>,
+    /// Previously sniffed Ads indexed by their cyklobazar id.
+    sniffs: HashMap<String, Sniff>,
 }
 
 impl Doggo {
-    pub fn new(email: String, url: Url) -> Self {
+    #[expect(unused)]
+    pub fn new(name: String, email: String, url: Url) -> Self {
         Self {
+            id: Uuid::new_v4(),
+            name,
             email,
             url,
             last_run: None,
-            seen_ads: HashMap::new(),
+            sniffs: HashMap::new(),
+        }
+    }
+
+    pub fn new_with_id(id: Uuid, name: String, email: String, url: Url) -> Self {
+        Self {
+            id,
+            name,
+            email,
+            url,
+            last_run: None,
+            sniffs: HashMap::new(),
         }
     }
 
@@ -49,7 +63,8 @@ impl Doggo {
         last_run + SCRAPING_INTERVAL
     }
 
-    pub async fn run(&mut self) -> Result<()> {
+    /// Fetches latest ads from cyklobazar.cz and returns any that weren't sniffed yet.
+    pub async fn run(&mut self) -> Result<Vec<Ad>> {
         let mut new_ads = get_ads(self.url.clone()).await?;
         new_ads.retain(|ad| {
             // TODO: changed price should behave as if the ad is new.
@@ -63,24 +78,39 @@ impl Doggo {
             self.url
         );
 
-        // TODO: notify email instead
-        println!("{new_ads:#?}");
-
         for ad in new_ads.iter() {
             self.see_ad(ad.clone());
         }
         self.last_run = Some(Timestamp::now());
 
-        Ok(())
+        Ok(new_ads)
     }
 
     fn seen_ad(&self, ad: &Ad) -> bool {
-        // TODO: ask DB
-        self.seen_ads.contains_key(&ad.id)
+        self.sniffs.contains_key(&ad.cb_id)
     }
 
     fn see_ad(&mut self, ad: Ad) {
-        // TODO: persist to DB
-        self.seen_ads.insert(ad.id.clone(), ad);
+        let id = ad.cb_id.clone();
+        let sniff = Sniff {
+            ad,
+            last_sniffed_at: Timestamp::now(),
+        };
+
+        self.sniffs.insert(id, sniff);
     }
+}
+
+/// A single impression of an ad by a Doggo.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+struct Sniff {
+    pub last_sniffed_at: Timestamp,
+    pub ad: Ad,
+}
+
+// A single ad at cyklobazar.cz.
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Ad {
+    pub cb_id: String,
+    pub title: String,
 }

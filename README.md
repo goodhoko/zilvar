@@ -16,7 +16,7 @@ Malá webová appka, která mně (nebo komukoli jinýmu) dovoluje dostávat emai
 - [ ] setup network at the server laptop
 - [ ] install and setup a SMTP server
 - [ ] send new ads via email instead of printing them out
-- [ ] use SQLite for persistence over restarts
+- [x] persist data over runs
 - [ ] implement web interface
   - [ ] homepage / create doggo
   - [ ] confirm new doggo
