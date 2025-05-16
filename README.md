@@ -13,7 +13,7 @@ Malá webová appka, která mně (nebo komukoli jinýmu) dovoluje dostávat emai
 
 ## TODO
 
-- [ ] setup network at the server laptop
+- [x] setup network at the server laptop
 - [ ] install and setup a SMTP server
 - [ ] send new ads via email instead of printing them out
 - [x] persist data over runs
