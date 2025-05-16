@@ -9,6 +9,7 @@ use uuid::Uuid;
 
 mod cyklobazar_scraper;
 mod model;
+mod notification;
 mod persistence;
 
 #[tokio::main]

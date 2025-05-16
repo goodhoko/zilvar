@@ -114,3 +114,11 @@ pub struct Ad {
     pub cb_id: String,
     pub title: String,
 }
+
+impl Ad {
+    pub fn url(&self) -> Url {
+        let id = &self.cb_id;
+        let url = format!("https://www.cyklobazar.cz/inzerat/{id}/x");
+        Url::parse(&url).expect("we constructed a valid url")
+    }
+}
