@@ -14,7 +14,11 @@ Malá webová appka, která mně (nebo komukoli jinýmu) dovoluje dostávat emai
 ## TODO
 
 - [x] setup network at the server laptop
-- [ ] install and setup a SMTP server
+- [ ] setup email sending
+  - [ ] configure SPF (i.e. allow zilvar public IP)
+  - [ ] create DKIM keys
+  - [ ] configure DKIM (add public key DNS record), set policy to reject
+  - [ ] send emails with https://github.com/gzbakku/letterman
 - [ ] send new ads via email instead of printing them out
 - [x] persist data over runs
 - [ ] implement web interface
