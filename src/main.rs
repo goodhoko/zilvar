@@ -51,11 +51,10 @@ async fn run_pending_doggos(kennel: &mut Kennel) {
         .values_mut()
         .filter(|doggo| doggo.should_run_now());
     for doggo in pending_doggos {
-        match doggo.run().await {
-            Ok(new_ads) => {
-                println!("would notify about: {new_ads:?}");
-            }
-            Err(err) => println!("Failed to run {doggo:?}: {err:#}"),
+        if let Err(err) = doggo.run().await {
+            println!("Failed to run Doggo#{}({}): {err:#?}", doggo.id, doggo.name);
+        } else {
+            println!("Ran doggo#{} ({})", doggo.id, doggo.name)
         }
     }
 }

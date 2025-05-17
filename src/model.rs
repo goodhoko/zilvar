@@ -1,12 +1,12 @@
 use std::{collections::HashMap, time::Duration};
 
-use eyre::Result;
+use eyre::{Context, Result};
 use jiff::Timestamp;
 use reqwest::Url;
 use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
-use crate::cyklobazar_scraper::get_ads;
+use crate::{cyklobazar_scraper::get_ads, notification::notify};
 
 const SCRAPING_INTERVAL: Duration = Duration::from_secs(60 * 10);
 
@@ -64,7 +64,7 @@ impl Doggo {
     }
 
     /// Fetches latest ads from cyklobazar.cz and returns any that weren't sniffed yet.
-    pub async fn run(&mut self) -> Result<Vec<Ad>> {
+    pub async fn run(&mut self) -> Result<()> {
         let mut new_ads = get_ads(self.url.clone()).await?;
         new_ads.retain(|ad| {
             // TODO: changed price should behave as if the ad is new.
@@ -78,12 +78,21 @@ impl Doggo {
             self.url
         );
 
+        if !new_ads.is_empty() {
+            notify(self, &new_ads).await.wrap_err_with(|| {
+                format!(
+                    "notifying about adds sniffed by doggo {} ({})",
+                    self.name, self.id
+                )
+            })?;
+        }
+
         for ad in new_ads.iter() {
             self.see_ad(ad.clone());
         }
         self.last_run = Some(Timestamp::now());
 
-        Ok(new_ads)
+        Ok(())
     }
 
     fn seen_ad(&self, ad: &Ad) -> bool {

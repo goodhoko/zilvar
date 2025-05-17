@@ -46,5 +46,5 @@ fn parse_id(ad: ElementRef) -> Option<&str> {
 fn parse_title(ad: ElementRef) -> Option<String> {
     let heading_selector = Selector::parse("div.cb-offer__header h4").expect("valid selector");
     let text_nodes = ad.select(&heading_selector).next()?.text();
-    Some(text_nodes.collect::<Vec<_>>().join(" "))
+    Some(text_nodes.collect::<Vec<_>>().join(" ").trim().to_string())
 }
