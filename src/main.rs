@@ -3,6 +3,7 @@ use std::time::Duration;
 use eyre::Result;
 use jiff::Timestamp;
 use model::Doggo;
+use notification::Mailer;
 use persistence::Kennel;
 use tokio::time::sleep;
 use uuid::Uuid;
@@ -16,7 +17,8 @@ mod persistence;
 async fn main() -> Result<()> {
     color_eyre::install()?;
 
-    let mut kennel = Kennel::new("./db.json".parse()?).await;
+    let mut kennel = Kennel::new().await?;
+    let mailer = Mailer::new().await?;
 
     let my_doggo = Doggo::new_with_id(
         Uuid::nil(),
@@ -30,7 +32,7 @@ async fn main() -> Result<()> {
     kennel.persist().await?;
 
     loop {
-        run_pending_doggos(&mut kennel).await;
+        run_pending_doggos(&mut kennel, &mailer).await;
 
         if let Err(err) = kennel.persist().await {
             println!("Failed to persist kennel: {err:#?}");
@@ -45,13 +47,13 @@ async fn main() -> Result<()> {
     }
 }
 
-async fn run_pending_doggos(kennel: &mut Kennel) {
+async fn run_pending_doggos(kennel: &mut Kennel, mailer: &Mailer) {
     let pending_doggos = kennel
         .doggos
         .values_mut()
         .filter(|doggo| doggo.should_run_now());
     for doggo in pending_doggos {
-        if let Err(err) = doggo.run().await {
+        if let Err(err) = doggo.run(mailer).await {
             println!("Failed to run Doggo#{}({}): {err:#?}", doggo.id, doggo.name);
         } else {
             println!("Ran doggo#{} ({})", doggo.id, doggo.name)

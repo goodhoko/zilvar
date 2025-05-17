@@ -1,11 +1,13 @@
-use std::{collections::HashMap, path::PathBuf, time::Duration};
+use std::{collections::HashMap, env, path::PathBuf, time::Duration};
 
 use eyre::{Context as _, Result};
 use jiff::{SignedDuration, Timestamp};
-use tokio::fs::{read, write};
+use tokio::fs::{create_dir_all, read, write};
 use uuid::Uuid;
 
 use crate::model::Doggo;
+
+const KENNEL_PATH_ENV_VAR: &str = "KENNEL_PATH";
 
 pub struct Kennel {
     path: PathBuf,
@@ -13,19 +15,36 @@ pub struct Kennel {
 }
 
 impl Kennel {
-    pub async fn new(path: PathBuf) -> Self {
+    pub async fn new() -> Result<Self> {
+        let path: PathBuf = env::var(KENNEL_PATH_ENV_VAR)
+            .wrap_err_with(|| {
+                format!(
+                    "getting path to kennel from the environment variable {KENNEL_PATH_ENV_VAR}"
+                )
+            })?
+            .parse()?;
+
+        if let Some(parent) = path.parent() {
+            create_dir_all(parent).await.wrap_err_with(|| {
+                format!(
+                    "(recursively) creating directory at {} for kennel persistence",
+                    parent.display()
+                )
+            })?;
+        }
+
         let json = match read(&path).await {
             Ok(json) => json,
             Err(err) => {
                 println!(
                     "Couldn't load doggos from {path:?}: {err:#?}. Initializing empty kennel."
                 );
-                return Self::empty(path);
+                return Ok(Self::empty(path));
             }
         };
 
         let parsed: Result<HashMap<Uuid, Doggo>, serde_json::Error> = serde_json::from_slice(&json);
-        match parsed {
+        Ok(match parsed {
             Ok(doggos) => {
                 println!("Loaded {} doggos from {:?}", doggos.len(), &path);
                 Self { path, doggos }
@@ -36,7 +55,7 @@ impl Kennel {
                 );
                 Self::empty(path)
             }
-        }
+        })
     }
 
     fn empty(path: PathBuf) -> Self {
