@@ -1,0 +1,18 @@
+[Unit]
+Description=Zilvar Watchdog
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/zilvar
+Restart=always
+RestartSec=3
+User=zilvar-server
+Group=zilvar-server
+WorkingDirectory=/var/lib/zilvar
+Environment="KENNEL_PATH=db.json"
+Environment="DKIM_PRIVATE_KEY_PATH=/etc/zilvar/dkim_key.private"
+Environment="RUST_LOG=debug"
+Environment="RUST_BACKTRACE=1"
+
+[Install]
+WantedBy=default.target

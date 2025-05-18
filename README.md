@@ -21,7 +21,7 @@ Hlídací pes pro [cyklobazar.cz](https://www.cyklobazar.cz/). Malá webová app
   - [x] send emails with https://github.com/gzbakku/mail-send
 - [x] send new ads via email instead of printing them out
 - [x] persist data over runs
-- [ ] create service file, install as a systemd service
+- [x] create service file, install as a systemd service
 - [ ] implement web interface
   - [ ] homepage / create doggo
   - [ ] confirm new doggo
