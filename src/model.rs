@@ -8,7 +8,7 @@ use uuid::Uuid;
 
 use crate::{cyklobazar_scraper::get_ads, notification::Mailer};
 
-const SCRAPING_INTERVAL: Duration = Duration::from_secs(60 * 10);
+const SCRAPING_INTERVAL: Duration = Duration::from_secs(60 * 60);
 
 // A watchdog set to sniff for ads matching a certain search URL.
 #[derive(Debug, Clone, Serialize, Deserialize)]
