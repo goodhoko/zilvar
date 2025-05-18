@@ -1,7 +1,7 @@
 use std::time::Duration;
 
 use eyre::Result;
-use jiff::Timestamp;
+use jiff::{Timestamp, tz::TimeZone};
 use model::Doggo;
 use notification::Mailer;
 use persistence::Kennel;
@@ -41,7 +41,7 @@ async fn main() -> Result<()> {
         let until_next_run = kennel.until_next_run().unwrap_or(Duration::from_secs(1));
         println!(
             "Sleeping {until_next_run:?} until the next closest run at {:?}",
-            Timestamp::now() + until_next_run
+            (Timestamp::now() + until_next_run).to_zoned(TimeZone::system())
         );
         sleep(until_next_run).await
     }
