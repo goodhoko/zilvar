@@ -1,6 +1,6 @@
-# Cyklobazar.cz Watch Doggo
+# Zilvar
 
-Malá webová appka, která mně (nebo komukoli jinýmu) dovoluje dostávat emailové notifikace na nové inzeráty na [cyklobazaru](https://www.cyklobazar.cz/) - zdarma.
+Hlídací pes pro [cyklobazar.cz](https://www.cyklobazar.cz/). Malá webová appka, která mně (nebo komukoli jinýmu) posílá emailové notifikace na nové inzeráty - zdarma.
 
 **Zatím stále ve výstavbě.**
 

@@ -340,27 +340,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "cyklobazar-cz-doggo"
-version = "0.1.0"
-dependencies = [
- "color-eyre",
- "eyre",
- "futures",
- "hickory-resolver 0.25.2",
- "jiff",
- "mail-send",
- "once_cell",
- "regex",
- "reqwest",
- "scraper",
- "serde",
- "serde_json",
- "tokio",
- "url",
- "uuid",
-]
-
-[[package]]
 name = "data-encoding"
 version = "2.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3442,6 +3421,27 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "zilvar"
+version = "0.1.0"
+dependencies = [
+ "color-eyre",
+ "eyre",
+ "futures",
+ "hickory-resolver 0.25.2",
+ "jiff",
+ "mail-send",
+ "once_cell",
+ "regex",
+ "reqwest",
+ "scraper",
+ "serde",
+ "serde_json",
+ "tokio",
+ "url",
+ "uuid",
 ]
 
 [[package]]
