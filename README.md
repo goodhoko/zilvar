@@ -26,4 +26,5 @@ Hlídací pes pro [cyklobazar.cz](https://www.cyklobazar.cz/). Malá webová app
   - [ ] homepage / create doggo
   - [ ] confirm new doggo
   - [ ] kill doggo
+- [ ] setup SSL
 - [ ] use logging lib
