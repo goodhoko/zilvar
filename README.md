@@ -14,7 +14,7 @@ Hlídací pes pro [cyklobazar.cz](https://www.cyklobazar.cz/). Malá webová app
 ## TODO
 
 - [x] setup network at the server laptop
-- [ ] setup email sending
+- [x] setup email sending
   - [x] configure SPF (i.e. allow zilvar public IP)
   - [x] create DKIM keys
   - [x] configure DKIM (add public key DNS record), set policy to reject
