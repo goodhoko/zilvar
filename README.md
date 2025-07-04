@@ -27,4 +27,5 @@ Hlídací pes pro [cyklobazar.cz](https://www.cyklobazar.cz/). Malá webová app
   - [ ] confirm new doggo
   - [ ] kill doggo
 - [ ] setup SSL
+- [ ] migrate to [JoyDB](https://github.com/greyblake/joydb/)?
 - [ ] use logging lib
